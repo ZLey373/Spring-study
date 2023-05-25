@@ -10,7 +10,8 @@
   <name>Spring-study</name>
   <url>http://maven.apache.org</url>
   <modules>
-    <module>Spring-ioc1</module>
+    <module>Spring-01-ioc</module>
+    <module>Spring-02-HelloSpring</module>
   </modules>
 
   <properties>

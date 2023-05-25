@@ -7,7 +7,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>Spring-ioc1</artifactId>
+    <artifactId>Spring-01-ioc</artifactId>
     <packaging>jar</packaging>
 
     <name>Spring-ioc1</name>
