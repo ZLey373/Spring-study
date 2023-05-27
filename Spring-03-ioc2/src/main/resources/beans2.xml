@@ -28,7 +28,7 @@ id: bean的唯一标识，相当于对象名
 class: bean对象对应的全限定名，相当于包名+类型
 name: 也是别名，可以同时起多个别名
 -->
-    <bean id="user" class="com.zhaolei.pojo.User" name="u1 u2 u3 u4">
+    <bean id="user" class="com.zhaolei.pojo.User" >
         <constructor-arg type="java.lang.String" value="Zhaolei"></constructor-arg>
     </bean>
 </beans>
