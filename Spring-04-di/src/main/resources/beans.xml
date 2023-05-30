@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+<bean id="address" class="com.zhaolei.pojo.Address">
+    <property name="address" value="西安电子科技大学"></property>
+</bean>
+<bean id="student" class="com.zhaolei.pojo.Student">
+    <property name="name" value="赵磊"></property>
+    <!--引用注入-->
+    <property name="address" ref="address"></property>
+    <!-- 数组注入  -->
+    <property name="books">
+        <array>
+            <value>计算机组成原理</value>
+            <value>操作系统</value>
+            <value>计算机网络</value>
+            <value>数据机构</value>
+        </array>
+    </property>
+    <!--  List -->
+    <property name="hobbies">
+        <list>
+            <value>自驾游</value>
+            <value>敲代码</value>
+            <value>旅游</value>
+        </list>
+    </property>
+    <!--   map  -->
+    <property name="card">
+        <map>
+            <entry key="学号" value="22031212xxx"></entry>
+            <entry key="姓名" value="赵磊"></entry>
+            <entry key="专业" value="计算机科学与技术"></entry>
+        </map>
+    </property>
+    <!--   set  -->
+    <property name="games">
+        <set>
+            <value>王者荣耀</value>
+            <value>部落冲突</value>
+        </set>
+    </property>
+    <!--  null -->
+    <property name="ptr">
+        <null></null>
+    </property>
+     <!-- info -->
+    <property name="info">
+        <props>
+            <prop key="drive">123783210hdks</prop>
+            <prop key="url">http://dhsje12.com</prop>
+            <prop key="username">root</prop>
+            <prop key="password">123</prop>
+        </props>
+    </property>
+</bean>
+
+</beans>
