@@ -13,10 +13,11 @@ public class MyTest {
     @Test
     public void test(){
         ApplicationContext context = new ClassPathXmlApplicationContext("Applicationcontext.xml");
-        User user = context.getBean("user", User.class);
+        User user = context.getBean("user2", User.class);
         User user2 = context.getBean("user2", User.class);
-        System.out.println(user);
-        System.out.println(user2);
+        System.out.println(user.hashCode());
+        System.out.println(user2.hashCode());
+        System.out.println(user2==user);
     }
 }
 
