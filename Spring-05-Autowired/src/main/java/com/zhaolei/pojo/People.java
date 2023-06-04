@@ -1,8 +1,17 @@
 package com.zhaolei.pojo;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+
+import javax.annotation.Resource;
+
 public class People {
+        @Resource
         private Cat cat;
+        @Resource(name = "dog22")
         private Dog dog;
+
         private String name;
 
     public Cat getCat() {

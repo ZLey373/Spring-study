@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd">
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd">
+
+<!--    <bean id="cat" class="com.zhaolei.pojo.Cat"></bean>-->
+<!--    <bean id="dog" class="com.zhaolei.pojo.Dog"></bean>-->
+<!--&lt;!&ndash;byName自动装配&ndash;&gt;-->
+<!--&lt;!&ndash;    <bean id="people" class="com.zhaolei.pojo.People" autowire="byName">&ndash;&gt;-->
+<!--&lt;!&ndash;        <property name="name" value="赵磊"></property>&ndash;&gt;-->
+<!--&lt;!&ndash;    ************************************************************   &ndash;&gt;-->
+<!--&lt;!&ndash;        <property name="cat" ref="cat"></property>&ndash;&gt;-->
+<!--&lt;!&ndash;        <property name="dog" ref="dog"></property>&ndash;&gt;-->
+<!--    &lt;!&ndash;byType自动装配&ndash;&gt;-->
+<!--    <bean id="people" class="com.zhaolei.pojo.People" autowire="byType">-->
+<!--        <property name="name" value="赵磊"></property>-->
+<!--    </bean>-->
+
+   <!--    开启注解   -->
+    <context:annotation-config></context:annotation-config>
+
     <bean id="cat" class="com.zhaolei.pojo.Cat"></bean>
     <bean id="dog" class="com.zhaolei.pojo.Dog"></bean>
-<!--byName自动装配-->
-<!--    <bean id="people" class="com.zhaolei.pojo.People" autowire="byName">-->
-<!--        <property name="name" value="赵磊"></property>-->
-<!--    ************************************************************   -->
-<!--        <property name="cat" ref="cat"></property>-->
-<!--        <property name="dog" ref="dog"></property>-->
-    <!--byType自动装配-->
-    <bean id="people" class="com.zhaolei.pojo.People" autowire="byType">
-        <property name="name" value="赵磊"></property>
-    </bean>
+    <bean id="dog22" class="com.zhaolei.pojo.Dog"></bean>
+    <bean id="people" class="com.zhaolei.pojo.People"></bean>
 </beans>
 
