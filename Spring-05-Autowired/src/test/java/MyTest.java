@@ -12,4 +12,11 @@ public class MyTest {
         people.getDog().shout();
         System.out.println(people.getName());
     }
+    public void test2(){
+        ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        People people = context.getBean("people", People.class);
+        people.getCat().shout();
+        people.getDog().shout();
+        System.out.println(people.getName());
+    }
 }
