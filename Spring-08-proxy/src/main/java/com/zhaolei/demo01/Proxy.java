@@ -1,4 +1,4 @@
-package com.zhaolei;
+package com.zhaolei.demo01;
 
 public class Proxy implements Rent{
     private Host host;

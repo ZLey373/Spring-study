@@ -1,4 +1,4 @@
-package com.zhaolei;
+package com.zhaolei.demo01;
 
 //房东
 public class Host implements Rent{
