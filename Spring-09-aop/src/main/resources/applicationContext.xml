@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           https://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           https://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/aop
+                           https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <context:component-scan base-package="com.zhaolei"></context:component-scan>
+    <context:annotation-config/>
+    
+<!--    注册bean-->
+    <bean id="UserService" class="com.zhaolei.service.UserServiceImpl"></bean>
+    <bean id="prelog" class="com.zhaolei.log.preLog"></bean>
+    <bean id="afterlog" class="com.zhaolei.log.afterLog"></bean>
+
+<!--    配置aop：需要导入aop的约束   -->
+    <aop:config>
+<!--     切入点：expression: 表达式：execution(需执行的位置！* * * * *)    -->
+        <aop:pointcut id="pointcut" expression="execution(* com.zhaolei.service.UserServiceImpl.*(..))"/>
+
+<!--    执行环绕增加   -->
+        <aop:advisor advice-ref="prelog" pointcut-ref="pointcut"></aop:advisor>
+        <aop:advisor advice-ref="afterlog" pointcut-ref="pointcut"></aop:advisor>
+
+    </aop:config>
+</beans>
