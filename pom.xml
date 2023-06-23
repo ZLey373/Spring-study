@@ -18,6 +18,7 @@
       <module>Spring-06-anno</module>
       <module>Spring-07-annoconfig</module>
       <module>Spring-08-proxy</module>
+      <module>Spring-09-aop</module>
   </modules>
 
   <properties>
