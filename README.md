@@ -1,5 +1,3 @@
-# Spring-study
-Spring自学记录
 ## 1、Spring
 
 ### 1.1 介绍
@@ -43,6 +41,7 @@ GitHub: [spring-projects/spring-framework: Spring Framework (github.com)](https:
 - Spring Cloud
     - Spring Cloud是基于SpringBoot开发的
 
+​
 
 ## 2、IOC理论推导
 
@@ -79,7 +78,7 @@ GitHub: [spring-projects/spring-framework: Spring Framework (github.com)](https:
 采用XML方式配置Bean的时候，Bean的定义信息是和实现分离的，而采用注解的方式可以把两者合为一体，Bean的定义信息直接以注解的形式定义在实现类中，从而达到了零配置的目的。
 
 控制反转是一种通过描述（XML或注解）并通过第三方去生产或获取特定对象的方式。在Spring中实现控制反转的是IoC容器，其实现方法是依赖注入（Dependency Injection,DI）。
-![img](D:\Code\Java_code\Spring-study\image\aHR0cHM6Ly9pbWcyMDE4LmNuYmxvZ3MuY29tL2Jsb2cvMTQxODk3NC8yMDE5MDcvMTQxODk3NC0yMDE5MDcyNjExMjg1NTA3NC02Njk5OTg3OTYucG5n.png)
+![img](Spring学习笔记.assets/aHR0cHM6Ly9pbWcyMDE4LmNuYmxvZ3MuY29tL2Jsb2cvMTQxODk3NC8yMDE5MDcvMTQxODk3NC0yMDE5MDcyNjExMjg1NTA3NC02Njk5OTg3OTYucG5n.png)
 
 ## 3、HelloSpring
 
@@ -203,13 +202,13 @@ public class Mytest {
 
 结果：
 
-![image-20230526211828217](D:\Code\Java_code\Spring-study\image\image-20230526211828217.png)
+![image-20230526211828217](Spring学习笔记.assets/image-20230526211828217.png)
 
 
 
 2、如果实体类需使用有参构造函数则有以下解决办法：
 
-1.  方法一
+1. 方法一
 
    ```xml
    <bean id="hello" class="com.zhaolei.hello.Hello">
@@ -284,4 +283,1021 @@ name: 也是别名，可以同时起多个别名
 
 
 
-​          ![image-20230527205353452](D:\Code\Java_code\Spring-study\image\image-20230527205353452.png)
+​          ![image-20230527205353452](Spring学习笔记.assets/image-20230527205353452.png)
+
+## 6、注入依赖
+
+依赖： beans.xml容器创建对象
+
+注入：通过容器给对象赋值
+
+### 6.1、通过构造器注入
+
+### 6.2、通过Set注入
+
+1. 复杂类型
+
+   ```java
+   public class Address {
+       private String address;
+   
+       public String getAddress() {
+           return address;
+       }
+   
+       public void setAddress(String address) {
+           this.address = address;
+       }
+   }
+   
+   ```
+
+2. 真实测试对象
+
+   ```java
+   public class Student {
+       private String name;
+       private Address address;
+       private String[] books;
+       private List<String> hobbies;
+       private Map<String,String> card;
+       private Set<String> games;
+       private String ptr;
+       private Properties info;
+   }
+   ```
+
+3. beans.xml
+
+   ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <beans xmlns="http://www.springframework.org/schema/beans"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+   <bean id="student" class="com.zhaolei.pojo.Student">
+       <property name="name" value="赵磊"></property>
+   </bean>
+   </beans>
+   
+   ```
+
+4. 测试类
+
+   ```java
+   public class MyTest {
+       public static void main(String[] args) {
+           ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+           Student student = (Student) context.getBean("student");
+           System.out.println(student.getName());
+       }
+   }
+   ```
+
+   完善beans.xml
+
+   ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <beans xmlns="http://www.springframework.org/schema/beans"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+   <bean id="address" class="com.zhaolei.pojo.Address">
+       <property name="address" value="西安电子科技大学"></property>
+   </bean>
+   <bean id="student" class="com.zhaolei.pojo.Student">
+       <property name="name" value="赵磊"></property>
+       <!--引用注入-->
+       <property name="address" ref="address"></property>
+       <!-- 数组注入  -->
+       <property name="books">
+           <array>
+               <value>计算机组成原理</value>
+               <value>操作系统</value>
+               <value>计算机网络</value>
+               <value>数据机构</value>
+           </array>
+       </property>
+       <!--  List -->
+       <property name="hobbies">
+           <list>
+               <value>自驾游</value>
+               <value>敲代码</value>
+               <value>旅游</value>
+           </list>
+       </property>
+       <!--   map  -->
+       <property name="card">
+           <map>
+               <entry key="学号" value="22031212xxx"></entry>
+               <entry key="姓名" value="赵磊"></entry>
+               <entry key="专业" value="计算机科学与技术"></entry>
+           </map>
+       </property>
+       <!--   set  -->
+       <property name="games">
+           <set>
+               <value>王者荣耀</value>
+               <value>部落冲突</value>
+           </set>
+       </property>
+       <!--  null -->
+       <property name="ptr">
+           <null></null>
+       </property>
+        <!-- info -->
+       <property name="info">
+           <props>
+               <prop key="drive">123783210hdks</prop>
+               <prop key="url">http://dhsje12.com</prop>
+               <prop key="username">root</prop>
+               <prop key="password">123</prop>
+           </props>
+       </property>
+   </bean>
+   
+   </beans>
+   
+   ```
+
+   完善测试类：
+
+   ```java
+   public class MyTest {
+       public static void main(String[] args) {
+           ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+           Student student = (Student) context.getBean("student");
+           System.out.println(student.toString());
+       }
+   }
+   
+   
+   /*
+   * Student{name='赵磊',
+   *         address=Address{address='西安电子科技大学'},
+   *          books=[计算机组成原理, 操作系统, 计算机网络, 数据机构],
+   *          hobbies=[自驾游, 敲代码, 旅游],
+   *          card={学号=22031212xxx, 姓名=赵磊, 专业=计算机科学与技术},
+   *          games=[王者荣耀, 部落冲突],
+   *          ptr='null',
+   *          info={password=123, url=http://dhsje12.com, drive=123783210hdks, username=root}
+   * }
+   * */
+   ```
+
+### 6.3、其他方式注入
+
+p命名空间和c命名空间
+
+- 首先导入约束
+
+  ```xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <beans xmlns="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:p="http://www.springframework.org/schema/p"
+         xmlns:c="http://www.springframework.org/schema/c"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd">
+     <import resource="beans.xml"></import>
+      <bean id="user" class="com.zhaolei.pojo.User" p:name="赵磊" p:age="22"></bean>
+      <bean id="user2" class="com.zhaolei.pojo.User" c:name="zl" c:age="22"></bean>
+  </beans>
+  
+  ```
+
+  ```xml
+     xmlns:p="http://www.springframework.org/schema/p"
+     xmlns:c="http://www.springframework.org/schema/c"
+  ```
+
+- 调用
+
+  ```xml
+    <bean id="user" class="com.zhaolei.pojo.User" p:name="赵磊" p:age="22"></bean>
+    <bean id="user2" class="com.zhaolei.pojo.User" c:name="zl" c:age="22"></bean>
+  ```
+
+- 测试
+
+  ```java
+  @Test
+  public void test(){
+      ApplicationContext context = new ClassPathXmlApplicationContext("Applicationcontext.xml");
+      User user = context.getBean("user", User.class);
+      User user2 = context.getBean("user2", User.class);
+      System.out.println(user);
+      System.out.println(user2);
+  }
+  ```
+
+注意：c命名空间的使用必须是有参构造方法!!!
+
+### 6.4、bean的作用域
+
+1. singleton 单例模式（Spring的默认模式）：从容器里getBean的对象都是同一个
+
+   ```xml
+    <bean id="user2" class="com.zhaolei.pojo.User" c:name="zl" c:age="22" scope="singleton"></bean>
+   ```
+
+2. prototype原型模式：从容器中getBeam的对象都是不同的
+
+   ```java
+   <bean id="user2" class="com.zhaolei.pojo.User" c:name="zl" c:age="22" scope="prototype"></bean>
+   ```
+
+3. request、session、application都是在web中实用的模式
+
+
+
+## 7、bean的自动装配
+
+### 7.1、环境搭建：一个人有两个宠物
+
+### 7.2、测试
+
+1. 实体类
+
+   ```java
+   public class People {
+           private Cat cat;
+           private Dog dog;
+           private String name;
+   }
+   ```
+
+2. xml
+
+   ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <beans xmlns="http://www.springframework.org/schema/beans"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+       <bean id="cat" class="com.zhaolei.pojo.Cat"></bean>
+       <bean id="dog" class="com.zhaolei.pojo.Dog"></bean>
+   
+       <bean id="people" class="com.zhaolei.pojo.People">
+           <property name="name" value="赵磊"></property>
+           <property name="cat" ref="cat"></property>
+           <property name="dog" ref="dog"></property>
+       </bean>
+   </beans>
+   ```
+
+3. 测试
+
+   ```java
+   public class MyTest {
+       @Test
+       public void test(){
+           ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+           People people = context.getBean("people", People.class);
+           people.getCat().shout();
+           people.getDog().shout();
+       }
+   }
+   ```
+
+### 7.3、 byName 自动装配
+
+```xml
+<bean id="cat" class="com.zhaolei.pojo.Cat"></bean>
+<bean id="dog" class="com.zhaolei.pojo.Dog"></bean>
+<bean id="people" class="com.zhaolei.pojo.People" autowire="byName">
+    <property name="name" value="赵磊"></property>
+</bean>
+```
+
+byName: 从容器中选取与类（people）的属性（有三个属性name、cat、dog）相同（cat、dog）的名字；
+
+### 7.4、 byType 自动装配
+
+```xml
+<bean id="cat" class="com.zhaolei.pojo.Cat"></bean>
+<bean id="dog" class="com.zhaolei.pojo.Dog"></bean>
+<!--byType自动装配-->
+<bean id="people" class="com.zhaolei.pojo.People" autowire="byType">
+    <property name="name" value="赵磊"></property>
+</bean>
+```
+
+byType:从容器中选取类别一致的，class后面的类别。
+
+### 7.5、注解自动装配
+
+1. 首先导入约束
+
+   ```xml
+   xmlns:context="http://www.springframework.org/schema/context"
+   ```
+
+   ```xml
+   http://www.springframework.org/schema/context
+   https://www.springframework.org/schema/context/spring-context.xsd
+   ```
+
+
+
+2. 开启注解
+
+   ```xml
+   <context:annotation-config/>
+   ```
+
+3. 使用注解
+
+```java
+public class People {
+        @Autowired
+        private Cat cat;
+        @Autowired
+        private Dog dog;
+        private String name;
+}
+```
+
+
+
+综合：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           https://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+
+</beans>
+```
+
+小结：
+
+- @Autowired使用时，类可以不用添加Set方法。
+
+- @Autowired一般会和@Qualifier一起使用，@Qualifier可以设置名字，如cat222.
+
+- @Autowired 先通过byType判断再通过byName判断
+
+
+
+@Resource 也可以实现自动装配：先通过byName判断再通过byType判断,且可以使用@Resource(name = "dog22")设置要自动装配的名称，更为方便!
+
+
+
+## 8、使用注解开发
+
+1. 导入注解支持的文件
+
+   ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <beans xmlns="http://www.springframework.org/schema/beans"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns:context="http://www.springframework.org/schema/context"
+          xsi:schemaLocation="http://www.springframework.org/schema/beans
+                              https://www.springframework.org/schema/beans/spring-beans.xsd
+                              http://www.springframework.org/schema/context
+                              https://www.springframework.org/schema/context/spring-context.xsd">
+        <context:component-scan base-package="com.zhaolei"></context:component-scan>   <!-- 扫描包-->
+       <context:annotation-config/>   <!-- 开启注解 -->
+   
+   </beans>
+   ```
+
+2. 使用注解对类进行注入@Component
+
+   ```java
+   @Component        //注解   相等于 <bean id="user" class="com.zhaolei.pojo.User"></bean>
+   public class User {
+       public String name;
+   }
+   ```
+
+
+
+3. 使用注解给属性注入@Value
+
+   ```java
+   public class User {
+       @Value("zley")
+       public String name;
+   }
+   ```
+
+4. 衍生的注解
+
+    - service     (@Service)
+
+    - controller   (@Controller)
+
+    - dao    (@Repository)
+
+      ==这三个注解和@Component注解的功能相同，只是服务的对象不同==
+
+5. 自动装配
+
+   ```java
+   public class People {
+           @Autowired
+           private Cat cat;
+           @Autowired
+           private Dog dog;
+           private String name;
+   }
+   ```
+
+6. 作用域@Scope("singleton")  单例模式
+
+   ```java
+   @Component        //注解   相等于 <bean id="user" class="com.zhaolei.pojo.User"></bean>
+   @Scope("singleton")
+   public class User {
+       @Value("zley")
+       public String name;
+   }
+   ```
+
+7. 小结
+
+   xml与注解：
+
+    - xml更加万能，适合任何场合，维护简单！
+    - 注解不是自己的类是用不了，维护比较复杂!
+
+   xml与注解的最佳实践：
+
+    - xml用来管理bean；
+
+    - 注解只负责完成属性的注入；
+
+    - 在我们使用的过程中，要注意一个问题：要让注解生效，必需要开启注解的支持!
+
+      ```xml
+      <context:component-scan base-package="com.zhaolei"></context:component-scan>
+      <context:annotation-config/>
+      ```
+
+
+
+## 9、使用Java注解开发
+
+1. 首先创建配置类
+
+   ```java
+   import com.zhaolei.pojo.User;
+   import org.springframework.context.annotation.Bean;
+   import org.springframework.context.annotation.Configuration;
+   
+   @Configuration
+   public class ZLConfig {
+       @Bean
+       public User user(){
+           return new User();
+       }
+   }
+   ```
+
+   @Bean: 注释用于指示方法实例化、配置和初始化要由Spring IoC容器管理的新对象。
+
+   @Configuration表明其主要目的是作为bean定义的来源,
+
+   @Configuration类允许通过调用同一类中的其他@bean方法来定义bean间的依赖关系
+
+2. 创建实体类
+
+   ```java
+   package com.zhaolei.pojo;
+   import org.springframework.beans.factory.annotation.Value;
+   import org.springframework.stereotype.Component;
+   @Component
+   public class User {
+       @Value("赵磊")
+       private String name;
+   
+       public String getName() {
+           return name;
+       }
+       public void setName(String name) {
+           this.name = name;
+       }
+       @Override
+       public String toString() {
+           return "User{" +
+                   "name='" + name + '\'' +
+                   '}';
+       }
+   }
+   ```
+
+   使用@Component进行注入类，@Value注入属性值
+
+3. 测试
+
+   ```java
+   public class AppTest {
+       @Test
+       public void test(){
+           ApplicationContext context = new AnnotationConfigApplicationContext(ZLConfig.class);
+           User user = context.getBean("user", User.class);
+           System.out.println(user.getName());
+       }
+   }
+   ```
+
+4. 常用注解：
+
+    - @Import(ConfigA.class)
+    - @Scope("prototype")
+    - @ComponentScan(basePackages = "com.acme")
+    - @Autowired
+
+## 10、代理模式
+
+代理模式是SpringAOC的底层
+
+代理模式：
+
+- 静态代理
+- 动态代理
+
+### 10.1、静态代理
+
+角色分析：
+
+- 抽象角色：一般会使用接口或者抽象类  【租房这件事】
+- 代理角色：代理真实角色，一般会有一些附属操作 【中介】
+- 真实角色：被代理的角色  【房东】
+- 客户端：访问代理对象的人  【租客】
+
+代码步骤：
+
+1. 接口
+
+   ```java
+   public interface Rent {
+       public void rent();
+   }
+   
+   ```
+
+2. 真实类
+
+   ```java
+   public class Host implements Rent{
+   
+       @Override
+       public void rent() {
+           System.out.println("房东出租房子");
+       }
+   }
+   ```
+
+3. 代理类
+
+   ```java
+   public class Proxy implements Rent{
+       private Host host;
+   
+       public Proxy(Host host) {
+           this.host = host;
+       }
+   
+       public Proxy() {
+       }
+   
+       @Override
+       public void rent() {
+           host.rent();
+           seeHouse();
+           Contract();
+           fare();
+       }
+       public void seeHouse(){
+           System.out.println("中介带着看房子");
+       }
+       public void fare(){
+           System.out.println("中介收取中介费用");
+       }
+       public void Contract(){
+           System.out.println("签租赁合同");
+       }
+   }
+   
+   ```
+
+4. 客户
+
+   ```java
+   public class Client {
+       public static void main(String[] args) {
+           Host host = new Host();
+           Proxy proxy = new Proxy(host);
+           proxy.rent();
+       }
+   }
+   ```
+
+
+
+
+
+代理模式的优点：
+
+- 可以使得真实角色的操作更加纯粹！不用去关注一些公共的业务
+- 公共的业务就交给代理角色！实现了业务的分工
+- 公共业务发生拓展时，方便集中管理
+
+缺点：
+
+- 一个真实角色会产生一个代理对象，倒是开发的效率变低
+
+### 10.2 、动态代理
+
+- 动态代理和静态代理角色一样
+- 动态代理和代理类是动态生成的，不是我们直接写好
+- 动态代理分为两大类：基于接口的动态代理，基于类的动态代理
+
+1.   基于接口--JDK动态代理
+2.   基于类：cglib
+
+```java
+package com.zhaolei.demo03;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
+public class ProxyInvocationHandler implements InvocationHandler {
+    // 被代理的接口
+    private Object target;
+
+    public void setTarget(Object target) {
+        this.target = target;
+    }
+
+    // 生成的到代理类
+    public Object getProxy(){
+        return Proxy.newProxyInstance(this.getClass().getClassLoader(),
+                target.getClass().getInterfaces(),this);
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        log(method.getName());
+        Object result = method.invoke(target,args);
+        return result;
+    }
+    public void log(String msg){
+        System.out.println("执行了"+msg+"方法");
+    }
+}
+
+```
+
+测试：
+
+```java
+package com.zhaolei.demo03;
+
+import com.zhaolei.demo02.UserService;
+import com.zhaolei.demo02.UserServiceImpl;
+
+public class Client {
+
+    public static void main(String[] args) {
+        // 真实角色
+        UserServiceImpl userService = new UserServiceImpl();
+        // 代理角色，不存在
+        ProxyInvocationHandler pih = new ProxyInvocationHandler();
+        // 设置要代理的对象
+        pih.setTarget(userService);
+
+        // 动态生成代理类
+        UserService proxy = (UserService) pih.getProxy();
+        proxy.query();
+
+    }
+}
+```
+
+动态代理的好处：
+
+- 可以使真实角色的操作更加纯粹！不用去关注一些公共的业务
+- 公共也就就交给代理角色！实现了业务的分工！
+- 公共业务发生扩展的时候，方便集中管理！
+- 一个动态代理类代理的是一个接口，一般就是对应的一类业务
+
+
+
+
+
+## 11、AOP
+
+### 11.1、什么是AOP
+
+在软件业，AOP为Aspect Oriented Programming的缩写，意为：面向切面编程，通过预编译方式和运行期间动态代理实现程序功能的统一维护的一种技术。AOP是[OOP](https://baike.baidu.com/item/OOP/1152915)的延续，是[软件开发](https://baike.baidu.com/item/软件开发/3448966)中的一个热点，也是[Spring](https://baike.baidu.com/item/Spring)框架中的一个重要内容，是[函数式编程](https://baike.baidu.com/item/函数式编程/4035031)的一种衍生范型。==利用AOP可以对[业务逻辑](https://baike.baidu.com/item/业务逻辑/3159866)的各个部分进行隔离，从而使得业务逻辑各部分之间的[耦合度](https://baike.baidu.com/item/耦合度/2603938)降低，提高程序的[可重用性](https://baike.baidu.com/item/可重用性/53650612)，同时提高了开发的效率。==
+
+### 11.2、AOP在Spring中的作用
+
+提供声明式事务；允许用户自定义切面
+
+- 横切关注点:跨越应用程序多个模块的方法或功能.既是,与我们业务逻辑无关,但是我们需要关注的部分,就是横切关注点.如日志,安全,缓存,事务等…
+
+
+- 切面（ASPECT）：横切关注点 被模块化 的特殊对象。即，它是一个类。
+
+- 通知（Advice）：切面必须要完成的工作。即，它是类中的一个方法。
+
+- 目标（Target）：被通知对象。
+
+- 代理（Proxy）：向目标对象应用通知之后创建的对象。
+
+- 切入点（PointCut）：切面通知 执行的 “地点”的定义。
+
+- 连接点（JointPoint）：与切入点匹配的执行点。
+
+Spring AOP includes the following types of advice:
+
+- Before advice: 在连接点之前运行的建议，但不能阻止执行流继续进行到连接点（除非抛出异常）。
+- After returning advice: 在连接点正常完成后运行的建议（例如，如果一个方法返回而没有抛出异常）。
+- After throwing advice: 如果方法通过抛出异常退出，则要运行的建议。
+- After (finally) advice: 无论连接点以何种方式退出都要运行的建议（正常或异常返回）。
+- Around advice: 可以在方法调用前后执行自定义行为。它还负责选择是继续到连接点，还是通过返回自己的返回值或抛出异常来缩短建议的方法执行。
+
+
+
+代理机制：
+
+If the target object to be proxied implements at least one interface, a JDK dynamic proxy is used. All of the interfaces implemented by the target type are proxied. If the target object does not implement any interfaces, a CGLIB proxy is created.
+
+
+
+### 11.3、AOP在Spring中的使用
+
+1. 导入约束依赖：
+
+```xml
+    <dependency>
+        <groupId> org.aspectj</groupId >
+        <artifactId> aspectjweaver</artifactId >
+        <version> 1.9.4</version >
+    </dependency>
+```
+
+2. 配置 [applicationContext.xml](..\..\..\Code\Java_code\Spring-study\Spring-09-aop\src\main\resources\applicationContext.xml) 文件：
+
+   方法一：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           https://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           https://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/aop
+                           https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <context:component-scan base-package="com.zhaolei"></context:component-scan>
+    <context:annotation-config/>
+    
+<!--    注册bean-->
+    <bean id="UserService" class="com.zhaolei.service.UserServiceImpl"></bean>
+    <bean id="prelog" class="com.zhaolei.log.preLog"></bean>
+    <bean id="afterlog" class="com.zhaolei.log.afterLog"></bean>
+
+<!--    配置aop：需要导入aop的约束   -->
+    <aop:config>
+<!--     切入点：expression: 表达式：execution(需执行的位置！* * * * *)    -->
+        <aop:pointcut id="pointcut" expression="execution(* com.zhaolei.service.UserServiceImpl.*(..))"/>
+
+<!--    执行环绕增加   -->
+        <aop:advisor advice-ref="prelog" pointcut-ref="pointcut"></aop:advisor>
+        <aop:advisor advice-ref="afterlog" pointcut-ref="pointcut"></aop:advisor>
+
+    </aop:config>
+</beans>
+```
+
+方法二：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           https://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           https://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/aop
+                           https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <context:component-scan base-package="com.zhaolei"></context:component-scan>
+    <context:annotation-config/>
+    
+<!--    注册bean-->
+    <bean id="UserService" class="com.zhaolei.service.UserServiceImpl"></bean>
+    <bean id="prelog" class="com.zhaolei.log.preLog"></bean>
+    <bean id="afterlog" class="com.zhaolei.log.afterLog"></bean>
+<!--    方法二，自定义类   -->
+    <bean id="diy" class="com.zhaolei.diy.DiyPointCut"></bean>
+    <aop:config>
+        <!--自定义切面，ref表示要引用的类-->
+        <aop:aspect ref="diy">
+            <!--切入点-->
+            <aop:pointcut id="pointcut" expression="execution(* com.zhaolei.service.UserServiceImpl.*(..))"/>
+              <!-- 通知-->
+            <aop:before method="before" pointcut-ref="pointcut"></aop:before>
+            <aop:after method="after" pointcut-ref="pointcut"></aop:after>
+        </aop:aspect>
+
+    </aop:config>
+
+</beans>
+```
+
+
+
+3. afterLog:
+
+```java
+public class afterLog implements AfterReturningAdvice {
+    public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
+        System.out.println("执行了"+method.getName()+"方法，返回结果为："+returnValue);
+    }
+}
+```
+
+4. preLog:
+
+```java
+public class preLog implements MethodBeforeAdvice {
+    public void before(Method method, Object[] args, Object target) throws Throwable {
+        System.out.println(target.getClass().getName()+"的"+method.getName()+"被执行了");
+    }
+}
+```
+
+
+
+5. 测试：
+
+```java
+public class AppTest {
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+        UserService userService = (UserService) context.getBean("UserService");
+        userService.add();
+    }
+}
+
+```
+
+方法二：
+
+1. 导入依赖，同上
+
+2. 新建自定义类DiyPointCut
+
+   ```java
+   package com.zhaolei.diy;
+   
+   public class DiyPointCut {
+       public void before(){
+           System.out.println("---------执行前---------");
+       }
+       public void after(){
+           System.out.println("---------执行后---------");
+       }
+   }
+   
+   ```
+
+3. 配置xml文件
+
+   ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <beans xmlns="http://www.springframework.org/schema/beans"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns:context="http://www.springframework.org/schema/context"
+          xmlns:aop="http://www.springframework.org/schema/aop"
+          xsi:schemaLocation="http://www.springframework.org/schema/beans
+                              https://www.springframework.org/schema/beans/spring-beans.xsd
+                              http://www.springframework.org/schema/context
+                              https://www.springframework.org/schema/context/spring-context.xsd
+                              http://www.springframework.org/schema/aop
+                              https://www.springframework.org/schema/aop/spring-aop.xsd">
+   
+       <context:component-scan base-package="com.zhaolei"></context:component-scan>
+       <context:annotation-config/>
+       
+   <!--    注册bean-->
+       <bean id="UserService" class="com.zhaolei.service.UserServiceImpl"></bean>
+       <bean id="prelog" class="com.zhaolei.log.preLog"></bean>
+       <bean id="afterlog" class="com.zhaolei.log.afterLog"></bean>
+   <!--    方法二，自定义类   -->
+       <bean id="diy" class="com.zhaolei.diy.DiyPointCut"></bean>
+       <aop:config>
+           <!--自定义切面，ref表示要引用的类-->
+           <aop:aspect ref="diy">
+               <!--切入点-->
+               <aop:pointcut id="pointcut" expression="execution(* com.zhaolei.service.UserServiceImpl.*(..))"/>
+                 <!-- 通知-->
+               <aop:before method="before" pointcut-ref="pointcut"></aop:before>
+               <aop:after method="after" pointcut-ref="pointcut"></aop:after>
+           </aop:aspect>
+   
+       </aop:config>
+   
+   
+   </beans>
+   ```
+
+4. 测试同上
+
+   ![image-20230624164444497](C:\typora工作区\Java\Spring\assets\image-20230624164444497.png)
+
+
+
+方法三：注解的方式
+
+1. 导入依赖，同上
+
+2. 新建自定义类
+
+   ```java
+   package com.zhaolei.diy;
+   
+   import org.aspectj.lang.JoinPoint;
+   import org.aspectj.lang.ProceedingJoinPoint;
+   import org.aspectj.lang.annotation.After;
+   import org.aspectj.lang.annotation.Around;
+   import org.aspectj.lang.annotation.Aspect;
+   import org.aspectj.lang.annotation.Before;
+   
+   @Aspect     // 注册切面
+   public class InnoPointCut {
+       @Before("execution(* com.zhaolei.service.UserServiceImpl.*(..))")  // 绑定切点
+       public void before(){
+           System.out.println("---------执行前---------");
+       }
+       @After("execution(* com.zhaolei.service.UserServiceImpl.*(..))")
+       public void after(){
+           System.out.println("---------执行后---------");
+       }
+   
+       @Around("execution(* com.zhaolei.service.UserServiceImpl.*(..))")
+       public void around(ProceedingJoinPoint jp) throws Throwable {
+           System.out.println("-----环绕前----");
+           Object proceed = jp.proceed();
+           System.out.println("-----环绕后----");
+       }
+   }
+   
+   ```
+
+3. 配置xml
+
+   ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <beans xmlns="http://www.springframework.org/schema/beans"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns:context="http://www.springframework.org/schema/context"
+          xmlns:aop="http://www.springframework.org/schema/aop"
+          xsi:schemaLocation="http://www.springframework.org/schema/beans
+                              https://www.springframework.org/schema/beans/spring-beans.xsd
+                              http://www.springframework.org/schema/context
+                              https://www.springframework.org/schema/context/spring-context.xsd
+                              http://www.springframework.org/schema/aop
+                              https://www.springframework.org/schema/aop/spring-aop.xsd">
+   
+       <context:component-scan base-package="com.zhaolei"></context:component-scan>
+       <context:annotation-config/>
+       
+   <!--    注册bean-->
+       <bean id="UserService" class="com.zhaolei.service.UserServiceImpl"></bean>
+       <bean id="prelog" class="com.zhaolei.log.preLog"></bean>
+       <bean id="afterlog" class="com.zhaolei.log.afterLog"></bean>
+   <!--    方式三:注解   -->
+   <!--    注册自定义类   -->
+       <bean id="inno" class="com.zhaolei.diy.InnoPointCut"></bean>
+       <!--开启注解支持-->
+       <aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+   
+   
+   </beans>
+   ```
+
+4. 测试
+
+   ![image-20230624171255841](C:\typora工作区\Java\Spring\assets\image-20230624171255841.png)
