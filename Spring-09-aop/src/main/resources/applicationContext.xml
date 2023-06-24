@@ -17,15 +17,35 @@
     <bean id="UserService" class="com.zhaolei.service.UserServiceImpl"></bean>
     <bean id="prelog" class="com.zhaolei.log.preLog"></bean>
     <bean id="afterlog" class="com.zhaolei.log.afterLog"></bean>
+<!--&lt;!&ndash;方法一，SpringApi&ndash;&gt;-->
+<!--&lt;!&ndash;    配置aop：需要导入aop的约束   &ndash;&gt;-->
+<!--    <aop:config>-->
+<!--&lt;!&ndash;     切入点：expression: 表达式：execution(需执行的位置！* * * * *)    &ndash;&gt;-->
+<!--        <aop:pointcut id="pointcut" expression="execution(* com.zhaolei.service.UserServiceImpl.*(..))"/>-->
 
-<!--    配置aop：需要导入aop的约束   -->
-    <aop:config>
-<!--     切入点：expression: 表达式：execution(需执行的位置！* * * * *)    -->
-        <aop:pointcut id="pointcut" expression="execution(* com.zhaolei.service.UserServiceImpl.*(..))"/>
+<!--&lt;!&ndash;    执行环绕增加   &ndash;&gt;-->
+<!--        <aop:advisor advice-ref="prelog" pointcut-ref="pointcut"></aop:advisor>-->
+<!--        <aop:advisor advice-ref="afterlog" pointcut-ref="pointcut"></aop:advisor>-->
 
-<!--    执行环绕增加   -->
-        <aop:advisor advice-ref="prelog" pointcut-ref="pointcut"></aop:advisor>
-        <aop:advisor advice-ref="afterlog" pointcut-ref="pointcut"></aop:advisor>
+<!--    </aop:config>-->
+<!--    方法二，自定义类   -->
+<!--    <bean id="diy" class="com.zhaolei.diy.DiyPointCut"></bean>-->
+<!--    <aop:config>-->
+<!--        &lt;!&ndash;自定义切面，ref表示要引用的类&ndash;&gt;-->
+<!--        <aop:aspect ref="diy">-->
+<!--            &lt;!&ndash;切入点&ndash;&gt;-->
+<!--            <aop:pointcut id="pointcut" expression="execution(* com.zhaolei.service.UserServiceImpl.*(..))"/>-->
+<!--              &lt;!&ndash; 通知&ndash;&gt;-->
+<!--            <aop:before method="before" pointcut-ref="pointcut"></aop:before>-->
+<!--            <aop:after method="after" pointcut-ref="pointcut"></aop:after>-->
+<!--        </aop:aspect>-->
 
-    </aop:config>
+<!--    </aop:config>-->
+<!--    方式三:注解   -->
+<!--    注册-->
+    <bean id="inno" class="com.zhaolei.diy.InnoPointCut"></bean>
+    <!--开启注解支持-->
+    <aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+
+
 </beans>
