@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           https://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           https://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/aop
+                           https://www.springframework.org/schema/aop/spring-aop.xsd
+                           http://www.springframework.org/schema/tx
+                           https://www.springframework.org/schema/tx/spring-tx.xsd">
+
+       <!--配置数据库，这里使用Spring的数据源代替Mybatis的数据源-->
+       <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+              <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+              <property name="url" value="jdbc:mysql://localhost:3306/mybatis?useSSL=true&amp;usseUnicode=true&amp;characterEncoding=UTF-8"/>
+              <property name="username" value="root"/>
+              <property name="password" value="123456"/>
+       </bean>
+       <!--sqlSessionFactory连接数据库-->
+       <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+              <property name="dataSource" ref="dataSource"/>
+              <!--绑定配置-->
+              <property name="configLocation" value="classpath:mybatis-config.xml"/>
+              <property name="mapperLocations" value="classpath:com/zhaolei/mapper/*.xml"/>
+       </bean>
+
+       <!--实例化连接对象-->
+       <bean id="sqlsession" class="org.mybatis.spring.SqlSessionTemplate">
+              <!--只能使用构造器进行注入，因为SqlSessionTemplate没有set方法-->
+              <constructor-arg index="0" ref="sqlSessionFactory"/>
+       </bean>
+       <!--配置事务声明-->
+       <bean id="transcationManage" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+              <property name="dataSource" ref="dataSource"/>
+       </bean>
+
+       <!--结合AOP实现事务的织入-->
+       <!--声明事务-->
+       <tx:advice id="txAdvice" transaction-manager="transcationManage">
+              <!--给方法配置事务-->
+              <tx:attributes>
+                     <tx:method name="add" propagation="REQUIRED"/>
+                     <tx:method name="delete" propagation="REQUIRED"/>
+                     <tx:method name="query" read-only="true"/>
+                     <tx:method name="*" propagation="REQUIRED"/>
+              </tx:attributes>
+       </tx:advice>
+
+       <!--配置事务切入-->
+       <aop:config>
+              <aop:pointcut id="txPointCut" expression="execution(* com.zhaolei.mapper.*.*(..))"/>
+              <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointCut"/>
+       </aop:config>
+
+
+</beans>
